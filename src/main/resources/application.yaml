@@ -1,0 +1,11 @@
+exchange:
+  api-key: 4319e1b9-895f-4157-b584-673bfecac0b6
+  variables:
+    urls:
+      market-data: https://redbrokers-market-data.herokuapp.com
+    exchange-url:
+      one: https://exchange.matraining.com/md
+      two: https://exchange2.matraining.com/md
+
+server:
+  port: 8085
