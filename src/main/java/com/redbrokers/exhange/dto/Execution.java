@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class Execution {
 
-   private LocalDateTime timestamp;
+   private String timestamp;
    private Double price;
    private int quantity;
 }

@@ -6,6 +6,7 @@ import com.redbrokers.exhange.dto.ErrorFromExchange;
 import com.redbrokers.exhange.dto.ErrorMessage;
 import com.redbrokers.exhange.dto.FullOrderBook;
 import com.redbrokers.exhange.dto.Order;
+import com.redbrokers.exhange.enums.Exchange;
 import com.redbrokers.exhange.service.ExchangeConnectivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,15 +37,16 @@ public class ExchangeConnectivityServiceImpl implements ExchangeConnectivityServ
     private final RestTemplate restTemplate;
     ErrorMessage.ErrorMessageBuilder errorMessage = ErrorMessage.builder();
     @Override
-    public ResponseEntity<?> createOrder(Order order) {
+    public ResponseEntity<?> createOrder(Order order, Exchange exchange) {
         /**
          * Used java 9's HttpClient experimentally, for the api call. We can change this later
          */
         String orderToJson = null;
+        var exchangeUrl = exchange.equals(Exchange.ONE) ? exchangeOneUrl : exchangeTwoUrl;
         try {
             orderToJson = objectMapper.writeValueAsString(order);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(exchangeOneUrl + orderBaseUrl))
+                    .uri(new URI(exchangeUrl + orderBaseUrl))
                     .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                     .POST(HttpRequest.BodyPublishers.ofString(orderToJson))
                     .build();
@@ -95,9 +97,11 @@ public class ExchangeConnectivityServiceImpl implements ExchangeConnectivityServ
     }
 
     @Override
-    public ResponseEntity<?> checkOrderStatus(UUID orderId) {
+    public ResponseEntity<?> checkOrderStatus(UUID orderId, Exchange exchange) {
         try {
-            var url = exchangeOneUrl + orderBaseUrl+ orderId;
+            var exchangeUrl = exchange.equals(Exchange.ONE) ? exchangeOneUrl : exchangeTwoUrl;
+
+            var url = exchangeUrl + orderBaseUrl+ orderId;
             var response = restTemplate.exchange(url, HttpMethod.GET, null, FullOrderBook.class);
 
             if(response.getStatusCode().is2xxSuccessful()) {

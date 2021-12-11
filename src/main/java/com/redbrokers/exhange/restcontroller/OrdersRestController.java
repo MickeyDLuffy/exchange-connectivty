@@ -1,6 +1,7 @@
 package com.redbrokers.exhange.restcontroller;
 
 import com.redbrokers.exhange.dto.Order;
+import com.redbrokers.exhange.enums.Exchange;
 import com.redbrokers.exhange.service.ExchangeConnectivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,14 @@ public class OrdersRestController {
      *
      */
     @PostMapping("/create-order")
-    public ResponseEntity<?> makeOrder(@RequestBody Order order) {
-       return exchangeService.createOrder(order);
+    public ResponseEntity<?> makeOrder(@RequestBody Order order,
+                                       @RequestParam Exchange exchange) {
+       return exchangeService.createOrder(order, exchange);
+    }
+
+    @PostMapping("/create-order/multi-leg")
+    public ResponseEntity<?> makeMultiLegOrder(@RequestBody Order order) {
+        return exchangeService.createOrder(order, Exchange.ONE);
     }
 
     /**
@@ -31,8 +38,8 @@ public class OrdersRestController {
      * executions which should sum up to the total order made
      */
     @GetMapping("/{orderId}" )
-    public ResponseEntity<?> checkOrderStatus(@PathVariable UUID orderId) {
-      return exchangeService.checkOrderStatus(orderId);
+    public ResponseEntity<?> checkOrderStatus(@PathVariable UUID orderId, @RequestParam Exchange exchange) {
+      return exchangeService.checkOrderStatus(orderId, exchange);
     }
 
     /**

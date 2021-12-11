@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 public class ErrorMessage {
     String message;
     HttpStatus httpStatus;
+    String status;
+    String error;
+    String path;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class ErrorMessageBuilder {}
